@@ -354,10 +354,10 @@ func (c *ChannelsClient) FetchChannelsFeedCommentList(oid, nid, comment_id, next
 		}
 	}
 	resp, err := c.RequestFrontend("key:channels:fetch_feed_comment_list", types.ChannelsFeedCommentListBody{
-		ObjectId:  oid,
+		ObjectId:      oid,
 		ObjectNonceId: nid,
-		CommentId: comment_id,
-		NextMarker: next_marker,
+		CommentId:     comment_id,
+		NextMarker:    next_marker,
 	}, 10*time.Second)
 	if err != nil {
 		return nil, err
@@ -369,7 +369,6 @@ func (c *ChannelsClient) FetchChannelsFeedCommentList(oid, nid, comment_id, next
 	c.cache.Set(cache_key, &r, 60*time.Minute)
 	return &r, nil
 }
-
 
 func (c *ChannelsClient) ReloadChannels() error {
 	_, err := c.RequestFrontend("key:channels:reload", nil, 5*time.Second)
