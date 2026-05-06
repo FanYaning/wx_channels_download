@@ -169,7 +169,7 @@ type ChannelsObject struct {
 	ObjectDesc    ChannelsObjectDesc `json:"objectDesc"`
 	ObjectNonceId string             `json:"objectNonceId"`
 	SourceURL     string             `json:"source_url"`
-	CreateTime    int                `json:"createtime"`
+	CreateTime    int64              `json:"createtime"`
 	ForwardCount  int                `json:"forwardCount"`
 	LikeCount     int                `json:"likeCount"`
 	CommentCount  int                `json:"commentCount"`
@@ -278,7 +278,7 @@ type SharedFeedinfo struct {
 	Likecountfmt    string        `json:"likeCountFmt"`
 	Forwardcountfmt string        `json:"forwardCountFmt"`
 	Commentcountfmt string        `json:"commentCountFmt"`
-	Createtime      int           `json:"createtime"`
+	Createtime      int64         `json:"createtime"`
 	Ishardad        bool          `json:"isHardAd"`
 	Coverurl        string        `json:"coverUrl"`
 }
@@ -365,7 +365,7 @@ type ChannelsFeedProfile struct {
 	CoverHeight int                 `json:"cover_height"`
 	Duration    int                 `json:"duration"`
 	FileSize    int                 `json:"file_size"`
-	CreatedAt   int                 `json:"created_at"`
+	CreatedAt   int64               `json:"created_at"`
 	Contact     ChannelsFeedAccount `json:"contact"`
 }
 

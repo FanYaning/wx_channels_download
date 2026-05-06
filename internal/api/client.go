@@ -276,7 +276,7 @@ func (c *APIClient) createFeedTaskBody(oid, nid, reqUrl, eid string, isMp3, isCo
 			"id":          feed.ID,
 			"title":       feed.ObjectDesc.Description,
 			"spec":        spec,
-			"created_at":  strconv.Itoa(feed.CreateTime),
+			"created_at":  strconv.FormatInt(feed.CreateTime, 10),
 			"download_at": util.NowSecondsStr(),
 			"author":      feed.Contact.Nickname,
 		}
