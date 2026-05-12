@@ -119,11 +119,12 @@ type ChannelsContactExtInfo struct {
 }
 
 type ChannelsContact struct {
-	Username    string `json:"username"`
-	Nickname    string `json:"nickname"`
-	HeadUrl     string `json:"headUrl"`
-	Signature   string `json:"signature"`
-	CoverImgUrl string `json:"coverImgUrl"`
+	Username    string                 `json:"username"`
+	Nickname    string                 `json:"nickname"`
+	HeadUrl     string                 `json:"headUrl"`
+	Signature   string                 `json:"signature"`
+	CoverImgUrl string                 `json:"coverImgUrl"`
+	ExtInfo     ChannelsContactExtInfo `json:"extInfo"`
 }
 
 type ShortTitle struct {
@@ -174,6 +175,7 @@ type ChannelsObject struct {
 	LikeCount     int                `json:"likeCount"`
 	CommentCount  int                `json:"commentCount"`
 	FavCount      int                `json:"favCount"`
+	ObjectExtend  ObjectExtend       `json:"objectExtend"`
 }
 
 type ChannelsContactSearchResp struct {

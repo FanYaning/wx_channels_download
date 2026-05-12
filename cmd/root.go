@@ -68,8 +68,8 @@ var root_cmd = &cobra.Command{
 			Cfg.Existing = true
 		}
 		if err := Cfg.LoadConfig(); err != nil {
-			 fmt.Println(fmt.Sprintf("%s加载配置文件失败 %v", error_prefix, err))
-			 os.Exit(0)
+			fmt.Println(fmt.Sprintf("%s加载配置文件失败 %v", error_prefix, err))
+			os.Exit(0)
 		}
 		need_admin_for_proxy := viper.GetBool("proxy.system") || buildtags.UsingSunnyNet
 		is_admin := platform.IsAdmin()
@@ -122,7 +122,7 @@ func root_command(cfg *config.Config) {
 	defer stop()
 
 	fmt.Printf("\nv%v\n", cfg.Version)
-	fmt.Printf("问题反馈 https://github.com/ltaoo/wx_channels_download/issues\n\n")
+	//fmt.Printf("问题反馈 https://github.com/ltaoo/wx_channels_download/issues\n\n")
 
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	zerolog.TimeFieldFormat = time.RFC3339Nano

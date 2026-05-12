@@ -61,7 +61,7 @@ func serve_command() {
 
 	cfg := Cfg
 	fmt.Printf("\nv%v\n", cfg.Version)
-	fmt.Printf("问题反馈 https://github.com/ltaoo/wx_channels_download/issues\n\n")
+	//fmt.Printf("问题反馈 https://github.com/ltaoo/wx_channels_download/issues\n\n")
 
 	log_filepath := filepath.Join(cfg.RootDir, "app.log")
 	log_file, err := os.OpenFile(log_filepath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
