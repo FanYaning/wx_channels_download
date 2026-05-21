@@ -43,9 +43,9 @@ var (
 	jsFinderPCSearchReg                 = regexp.MustCompile(`async finderPCSearch\((\w+)\)\{(.*?)\}async`)
 	jsFinderSearchReg                   = regexp.MustCompile(`async finderSearch\((\w+)\)\{(.*?)\}async`)
 	jsFinderGetInteractionedFeedListReg = regexp.MustCompile(`async finderGetInteractionedFeedList\((\w+)\)\{(.*?)\}\}const`)
-	jsGoToPrevFlowReg                   = regexp.MustCompile(`goToPrevFlowFeed:([a-zA-Z]{1,})`)
-	jsGoToNextFlowReg                   = regexp.MustCompile(`goToNextFlowFeed:([a-zA-Z]{1,})`)
-	jsFlowTabReg                        = regexp.MustCompile(`flowTab:([a-zA-Z]{1,})`)
+	jsGoToPrevFlowReg                   = regexp.MustCompile(`goToPrevFlowFeed:([a-zA-Z_$]{1,})`)
+	jsGoToNextFlowReg                   = regexp.MustCompile(`goToNextFlowFeed:([a-zA-Z_$]{1,})`)
+	jsFlowTabReg                        = regexp.MustCompile(`flowTab:([a-zA-Z_$]{1,})`)
 	jsLocalFlowTabReg                   = regexp.MustCompile(`localFlowTab:([a-zA-Z]{1,})`)
 	jsLoadLocalPlaylistReg              = regexp.MustCompile(`loadLocalPlaylist:([a-zA-Z]{1,})`)
 )
@@ -216,7 +216,9 @@ func CreateChannelInterceptorPlugins(interceptor *Interceptor, files *ChannelInj
 				inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSEventBus)
 				inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSUtils)
 				inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSComponents)
-				inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSDownloader)
+				if !cfg.DownloadInFrontend {
+					inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSDownloader)
+				}
 				if cfg.InjectGlobalScript != "" {
 					inserted_scripts += fmt.Sprintf(`<script>%s</script>`, cfg.InjectGlobalScript)
 				}
