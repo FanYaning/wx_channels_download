@@ -44,7 +44,7 @@ func NewInterceptor(cfg *InterceptorConfig, cert *certificate.CertFileAndKeyFile
 
 func (c *Interceptor) Start() error {
 	echo.SetLogEnabled(false)
-	client, err := proxy.NewProxy(c.Cert.Cert, c.Cert.PrivateKey, c.Settings.ProxyUpstreamProxy)
+	client, err := proxy.NewProxy(c.Cert.Cert, c.Cert.PrivateKey, c.Settings.ProxyUpstreamProxy, c.Settings.ProxyTun, c.Settings.ProxyServerPort)
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (c *Interceptor) Start() error {
 			}
 		}
 	}
-	if !buildtags.UsingSunnyNet && c.Settings.ProxySetSystem {
+	if !buildtags.UsingSunnyNet && c.Settings.ProxySetSystem && !c.Settings.ProxyTun {
 		if err := system.EnableProxy(system.ProxySettings{
 			Device:   c.Settings.ProxyDevice,
 			Hostname: c.Settings.ProxyServerHostname,
@@ -114,7 +114,7 @@ func (c *Interceptor) Start() error {
 }
 
 func (c *Interceptor) Stop() error {
-	if !buildtags.UsingSunnyNet && c.Settings.ProxySetSystem {
+	if !buildtags.UsingSunnyNet && c.Settings.ProxySetSystem && !c.Settings.ProxyTun {
 		arg := system.ProxySettings{
 			Device:   c.Settings.ProxyDevice,
 			Hostname: c.Settings.ProxyServerHostname,
@@ -123,6 +123,11 @@ func (c *Interceptor) Stop() error {
 		err := system.DisableProxy(arg)
 		if err != nil {
 			return fmt.Errorf("关闭系统代理失败: %v", err)
+		}
+	}
+	if c.proxy != nil {
+		if err := c.proxy.Close(); err != nil {
+			return fmt.Errorf("关闭代理服务失败: %v", err)
 		}
 	}
 	return nil

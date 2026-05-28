@@ -31,7 +31,7 @@ type SunnyNetProxy struct {
 	plugins  []interface{}
 }
 
-func NewProxy(cert []byte, private_key []byte) (InnerProxy, error) {
+func NewProxy(cert []byte, private_key []byte, upstreamProxy string, tunEnabled bool, proxyPort int) (InnerProxy, error) {
 	Sunny := SunnyNet.NewSunny()
 	return &SunnyNetProxy{Sunny: Sunny}, nil
 }
@@ -57,6 +57,10 @@ func (p *SunnyNetProxy) Start(port int) error {
 			fmt.Println("进程代理驱动启动失败，使用系统代理")
 		}
 	}
+	return nil
+}
+
+func (p *SunnyNetProxy) Close() error {
 	return nil
 }
 
