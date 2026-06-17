@@ -1,4 +1,4 @@
-package channels
+﻿package channels
 
 import (
 	"encoding/json"
@@ -370,6 +370,30 @@ func (c *ChannelsClient) FetchChannelsFeedCommentList(oid, nid, comment_id, next
 	return &r, nil
 }
 
+func (c *ChannelsClient) FetchChannelsFeedShareUrl(oid string) (*types.ChannelsFeedShareUrlResp, error) {
+	if oid == "" {
+		return nil, errors.New("missing oid")
+	}
+	kk := fmt.Sprintf("%s", oid)
+	cache_key := "channels:feed_share_url:" + kk
+	if val, found := c.cache.Get(cache_key); found {
+		if resp, ok := val.(*types.ChannelsFeedShareUrlResp); ok {
+			return resp, nil
+		}
+	}
+	resp, err := c.RequestFrontend("key:channels:feed_share_url", types.ChannelsFeedShareUrlBody{
+		ObjectId: oid,
+	}, 10*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	var r types.ChannelsFeedShareUrlResp
+	if err := json.Unmarshal(resp.Data, &r); err != nil {
+		return nil, err
+	}
+	c.cache.Set(cache_key, &r, 60*time.Minute)
+	return &r, nil
+}
 func (c *ChannelsClient) ReloadChannels() error {
 	_, err := c.RequestFrontend("key:channels:reload", nil, 5*time.Second)
 	return err

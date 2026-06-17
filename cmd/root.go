@@ -7,8 +7,8 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strings"
 	"runtime"
+	"strings"
 	"syscall"
 	"time"
 

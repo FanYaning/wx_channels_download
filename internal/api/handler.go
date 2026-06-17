@@ -239,6 +239,20 @@ func (c *APIClient) handleFetchSharedFeedProfile(ctx *gin.Context) {
 	result.Ok(ctx, resp)
 }
 
+func (c *APIClient) handleFetchFeedShareUrl(ctx *gin.Context) {
+	oid := ctx.Query("oid")
+	if oid == "" {
+		result.Err(ctx, 400, "missing oid")
+		return
+	}
+	resp, err := c.channels.FetchChannelsFeedShareUrl(oid)
+	if err != nil {
+		result.Err(ctx, 400, err.Error())
+		return
+	}
+	result.Ok(ctx, resp)
+}
+
 type FeedDownloadTaskBody struct {
 	Id       string `json:"id"`
 	NonceId  string `json:"nonce_id"`
@@ -851,8 +865,9 @@ func (c *APIClient) handleOpenDownloadDir(ctx *gin.Context) {
 }
 
 type OpenFolderAndHighlightFileBody struct {
-	Path string `json:"path"`
-	Name string `json:"name"`
+	Path     string `json:"path"`
+	Name     string `json:"name"`
+	FilePath string `json:"file_path"`
 }
 
 // 在打开文件夹并选中指定文件
@@ -862,11 +877,14 @@ func (c *APIClient) handleHighlightFileInFolder(ctx *gin.Context) {
 		result.Err(ctx, 400, err.Error())
 		return
 	}
-	if body.Path == "" || body.Name == "" {
-		result.Err(ctx, 400, "Missing the `path` or `name`")
+	full_filepath := strings.TrimSpace(body.FilePath)
+	if full_filepath == "" && body.Path != "" && body.Name != "" {
+		full_filepath = filepath.Join(body.Path, body.Name)
+	}
+	if full_filepath == "" {
+		result.Err(ctx, 400, "Missing the `file_path` or `path` and `name`")
 		return
 	}
-	full_filepath := filepath.Join(body.Path, body.Name)
 	_, err := os.Stat(full_filepath)
 	if err != nil {
 		result.Err(ctx, 500, "找不到文件")

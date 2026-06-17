@@ -19,6 +19,7 @@ func (c *APIClient) SetupRoutes() {
 		c.engine.GET("/api/channels/interactioned/list", c.handleFetchInteractionedFeedList)
 		c.engine.GET("/api/channels/shared_feed/profile", c.handleFetchSharedFeedProfile)
 		c.engine.GET("/api/channels/feed/comment/list", c.handleFetchFeedCommentList)
+		c.engine.GET("/api/channels/feed/share_url", c.handleFetchFeedShareUrl)
 		c.engine.GET("/rss/channels", c.handleFetchFeedListOfContactRSS)
 		// 公众号接口
 		c.engine.GET("/ws/mp", c.official.HandleWebsocket)
@@ -38,6 +39,7 @@ func (c *APIClient) SetupRoutes() {
 		c.engine.POST("/api/filehelper/parse_finder_feed", c.filehelper.HandleParseFinderFeed)
 		// 文件操作
 		c.engine.POST("/api/show_file", c.handleHighlightFileInFolder)
+		c.engine.POST("/api/open_file", c.handleHighlightFileInFolder)
 		c.engine.POST("/api/open_download_dir", c.handleOpenDownloadDir)
 	}
 	// 下载任务接口

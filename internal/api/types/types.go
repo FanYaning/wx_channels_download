@@ -1,4 +1,4 @@
-package types
+﻿package types
 
 import (
 	"encoding/json"
@@ -527,4 +527,21 @@ type Authorcontact struct {
 type Baseresponse struct {
 	Ret    int    `json:"Ret"`
 	Errmsg Errmsg `json:"ErrMsg"`
+}
+
+type ChannelsFeedShareUrlBody struct {
+	ObjectId string `json:"oid"`
+}
+
+type ChannelsFeedShareUrlResp struct {
+	ErrCode int    `json:"errCode"`
+	ErrMsg  string `json:"errMsg"`
+	Data    struct {
+		Baseresponse Baseresponse  `json:"BaseResponse"`
+		FeedH5Url    string        `json:"feedH5Url"`
+		UrlList      []interface{} `json:"urlList"`
+	} `json:"data"`
+	Payload struct {
+		ObjectId string `json:"objectId"`
+	} `json:"payload"`
 }
