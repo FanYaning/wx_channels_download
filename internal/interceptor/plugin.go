@@ -10,8 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fatih/color"
-
 	"wx_channel/internal/interceptor/proxy"
 	"wx_channel/pkg/util"
 )
@@ -91,11 +89,11 @@ func CreateChannelInterceptorPlugins(interceptor *Interceptor, files *ChannelInj
 				return
 			}
 			if pathname == "/__wx_channels_api/profile" {
-				var data ChannelMediaProfile
-				if err := json.NewDecoder(ctx.Req().Body).Decode(&data); err != nil {
-					fmt.Println("[ECHO]handler", err.Error())
-				}
-				fmt.Printf("\n打开了视频\n%s\n", data.Title)
+				//var data ChannelMediaProfile
+				//if err := json.NewDecoder(ctx.Req().Body).Decode(&data); err != nil {
+				//	fmt.Println("[ECHO]handler", err.Error())
+				//}
+				//fmt.Printf("\n打开了视频\n%s\n", data.Title)
 				ctx.Mock(200, map[string]string{
 					"Content-Type": "application/json",
 				}, "{}")
@@ -126,12 +124,12 @@ func CreateChannelInterceptorPlugins(interceptor *Interceptor, files *ChannelInj
 				return
 			}
 			if pathname == "/__wx_channels_api/error" {
-				var data FrontendErrorTip
-				if err := json.NewDecoder(ctx.Req().Body).Decode(&data); err != nil {
-					fmt.Println("[ECHO]handler", err.Error())
-				}
-				prefix_text := "[FRONTEND ERROR]"
-				color.Red(fmt.Sprintf("%v%s\n", prefix_text, data.Msg))
+				//var data FrontendErrorTip
+				//if err := json.NewDecoder(ctx.Req().Body).Decode(&data); err != nil {
+				//	fmt.Println("[ECHO]handler", err.Error())
+				//}
+				//prefix_text := "[FRONTEND ERROR]"
+				//color.Red(fmt.Sprintf("%v%s\n", prefix_text, data.Msg))
 				ctx.Mock(200, map[string]string{
 					"Content-Type": "application/json",
 				}, "{}")
@@ -221,7 +219,11 @@ func CreateChannelInterceptorPlugins(interceptor *Interceptor, files *ChannelInj
 					inserted_scripts += fmt.Sprintf(`<script>%s</script>`, files.JSDownloader)
 				}
 				if cfg.InjectGlobalScript != "" {
-					inserted_scripts += fmt.Sprintf(`<script>%s</script>`, cfg.InjectGlobalScript)
+					if strings.HasPrefix(cfg.InjectGlobalScript, "<script") {
+						inserted_scripts += fmt.Sprintf(`%s`, cfg.InjectGlobalScript)
+					} else {
+						inserted_scripts += fmt.Sprintf(`<script>%s</script>`, cfg.InjectGlobalScript)
+					}
 				}
 				// 必须放在 JSUtils 后面
 				if cfg.PagespyEnabled {
