@@ -264,6 +264,22 @@ type FeedDownloadTaskBody struct {
 	Suffix   string `json:"suffix"`
 }
 
+type CreateTaskResp struct {
+	ID       string `json:"id"`
+	Path     string `json:"path"`
+	Name     string `json:"name"`
+	FilePath string `json:"file_path"`
+}
+
+func newCreateTaskResp(id, path, name string) CreateTaskResp {
+	return CreateTaskResp{
+		ID:       id,
+		Path:     path,
+		Name:     name,
+		FilePath: filepath.Join(path, name),
+	}
+}
+
 func (c *APIClient) handleCreateFeedDownloadTask(ctx *gin.Context) {
 	var body FeedDownloadTaskBody
 	if err := ctx.ShouldBindJSON(&body); err != nil {
@@ -293,6 +309,8 @@ func (c *APIClient) handleCreateFeedDownloadTask(ctx *gin.Context) {
 		result.Err(ctx, 409, "不合法的文件名，"+err.Error())
 		return
 	}
+	taskName := filename + body.Suffix
+	taskPath := filepath.Join(c.cfg.DownloadDir, dir)
 	connections := c.resolve_connections(body.URL)
 	if c.downloader == nil {
 		result.Err(ctx, 500, "请先初始化 downloader")
@@ -312,8 +330,8 @@ func (c *APIClient) handleCreateFeedDownloadTask(ctx *gin.Context) {
 			},
 		},
 		&base.Options{
-			Name: filename + body.Suffix,
-			Path: filepath.Join(c.cfg.DownloadDir, dir),
+			Name: taskName,
+			Path: taskPath,
 			Extra: &gopeedhttp.OptsExtra{
 				Connections: connections,
 			},
@@ -333,7 +351,7 @@ func (c *APIClient) handleCreateFeedDownloadTask(ctx *gin.Context) {
 			},
 		})
 	}
-	result.Ok(ctx, gin.H{"id": id})
+	result.Ok(ctx, newCreateTaskResp(id, taskPath, taskName))
 }
 
 type DownloadTaskPayload struct {
@@ -678,6 +696,8 @@ func (c *APIClient) handleCreateChannelsTask(ctx *gin.Context) {
 		result.Err(ctx, 409, "不合法的文件名，"+err.Error())
 		return
 	}
+	taskName := filename + payload.Suffix
+	taskPath := filepath.Join(c.cfg.DownloadDir, dir)
 	connections := c.resolve_connections(payload.URL)
 	id, err := c.downloader.CreateDirect(
 		&base.Request{
@@ -692,8 +712,8 @@ func (c *APIClient) handleCreateChannelsTask(ctx *gin.Context) {
 			},
 		},
 		&base.Options{
-			Name: filename + payload.Suffix,
-			Path: filepath.Join(c.cfg.DownloadDir, dir),
+			Name: taskName,
+			Path: taskPath,
 			Extra: &gopeedhttp.OptsExtra{
 				Connections: connections,
 			},
@@ -712,7 +732,7 @@ func (c *APIClient) handleCreateChannelsTask(ctx *gin.Context) {
 			},
 		})
 	}
-	result.Ok(ctx, gin.H{"id": id})
+	result.Ok(ctx, newCreateTaskResp(id, taskPath, taskName))
 }
 
 func (c *APIClient) handleStartTask(ctx *gin.Context) {
@@ -788,7 +808,19 @@ func (c *APIClient) handleDeleteTask(ctx *gin.Context) {
 }
 
 func (c *APIClient) handleClearTasks(ctx *gin.Context) {
-	c.downloader.Delete(nil, true)
+	var body struct {
+		DeleteFiles bool `json:"delete_files"`
+	}
+	if ctx.Request.Body != nil && ctx.Request.ContentLength != 0 {
+		if err := ctx.ShouldBindJSON(&body); err != nil && err != io.EOF {
+			result.Err(ctx, 400, "不合法的参数")
+			return
+		}
+	}
+	if err := c.downloader.Delete(nil, body.DeleteFiles); err != nil {
+		result.Err(ctx, 500, err.Error())
+		return
+	}
 	c.downloader_ws.Broadcast(APIClientWSMessage{
 		Type: "clear",
 		Data: c.downloader.GetTasks(),
