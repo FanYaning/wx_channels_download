@@ -71,7 +71,7 @@ type ChannelsMediaItem struct {
 	VideoPlayLen int                 `json:"videoPlayLen"`
 	Width        float32             `json:"width"`
 	Height       float32             `json:"height"`
-	FileSize     int                 `json:"fileSize"`
+	FileSize     uint64              `json:"fileSize"`
 	Spec         []ChannelsMediaSpec `json:"spec"`
 	CoverUrl     string              `json:"coverUrl"`
 	DecodeKey    string              `json:"decodeKey"`
@@ -380,7 +380,7 @@ type ChannelsFeedProfile struct {
 	CoverWidth  int                 `json:"cover_width"`
 	CoverHeight int                 `json:"cover_height"`
 	Duration    int                 `json:"duration"`
-	FileSize    int                 `json:"file_size"`
+	FileSize    uint64              `json:"file_size"`
 	CreatedAt   int64               `json:"created_at"`
 	Contact     ChannelsFeedAccount `json:"contact"`
 }
